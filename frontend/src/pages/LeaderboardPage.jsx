@@ -1,32 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Trophy, Medal, Award } from 'lucide-react';
+import { leaderboardService } from '../services';
 
 export default function LeaderboardPage() {
-  const [timeframe, setTimeframe] = useState('monthly'); // 'monthly' or 'weekly'
+  const [timeframe, setTimeframe] = useState('monthly');
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock leaderboard data - replace with API calls later
-  const monthlyLeaderboard = [
-    { rank: 1, username: 'MarketMaster', score: -18, holesPlayed: 15, avgScore: -1.2 },
-    { rank: 2, username: 'BullRunner', score: -15, holesPlayed: 15, avgScore: -1.0 },
-    { rank: 3, username: 'EagleEye', score: -14, holesPlayed: 15, avgScore: -0.93 },
-    { rank: 4, username: 'GreenJacket', score: -13, holesPlayed: 15, avgScore: -0.87 },
-    { rank: 5, username: 'ChipShot', score: -12, holesPlayed: 15, avgScore: -0.8 },
-    { rank: 6, username: 'IronPlay', score: -11, holesPlayed: 14, avgScore: -0.79 },
-    { rank: 7, username: 'BirdieKing', score: -10, holesPlayed: 15, avgScore: -0.67 },
-    { rank: 8, username: 'ProTrader', score: -9, holesPlayed: 15, avgScore: -0.6 },
-    { rank: 9, username: 'PuttMaster', score: -8, holesPlayed: 13, avgScore: -0.62 },
-    { rank: 10, username: 'TeeTime', score: -7, holesPlayed: 15, avgScore: -0.47 }
-  ];
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [timeframe]);
 
-  const weeklyLeaderboard = [
-    { rank: 1, username: 'QuickDraw', score: -6, holesPlayed: 5, avgScore: -1.2 },
-    { rank: 2, username: 'SpeedGolf', score: -5, holesPlayed: 5, avgScore: -1.0 },
-    { rank: 3, username: 'FastTrack', score: -4, holesPlayed: 5, avgScore: -0.8 },
-    { rank: 4, username: 'WeekWarrior', score: -4, holesPlayed: 4, avgScore: -1.0 },
-    { rank: 5, username: 'DailyGrind', score: -3, holesPlayed: 5, avgScore: -0.6 }
-  ];
+  const fetchLeaderboard = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  const currentLeaderboard = timeframe === 'monthly' ? monthlyLeaderboard : weeklyLeaderboard;
+      const data = timeframe === 'monthly'
+        ? await leaderboardService.getMonthlyLeaderboard()
+        : await leaderboardService.getWeeklyLeaderboard();
+
+      setLeaderboardData(data);
+    } catch (err) {
+      setError(err.message || 'Failed to load leaderboard');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getRankIcon = (rank) => {
     if (rank === 1) return <Trophy className="w-6 h-6 text-yellow-500" />;
@@ -42,15 +43,43 @@ export default function LeaderboardPage() {
     return 'bg-green-50 text-green-800 border-green-200';
   };
 
+  const getTimeframeLabel = () => {
+    if (!leaderboardData) return '';
+    if (timeframe === 'monthly') {
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+      const month = leaderboardData.month || new Date().getMonth() + 1;
+      const year = leaderboardData.year || new Date().getFullYear();
+      return `${monthNames[month - 1]} ${year}`;
+    } else {
+      const week = leaderboardData.week || 1;
+      const year = leaderboardData.year || new Date().getFullYear();
+      return `Week ${week}, ${year}`;
+    }
+  };
+
+  const currentLeaderboard = leaderboardData?.leaderboard || [];
+  const topThree = currentLeaderboard.slice(0, 3);
+  const remaining = currentLeaderboard.slice(3);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading leaderboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 py-12">
       <div className="max-w-5xl mx-auto px-4">
-        
+
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-green-900 mb-2">Leaderboard</h1>
-          <p className="text-lg text-gray-600">
-            {timeframe === 'monthly' ? 'January 2026' : 'Week of Jan 13-17, 2026'}
-          </p>
+          <p className="text-lg text-gray-600">{getTimeframeLabel()}</p>
         </div>
 
         <div className="flex justify-center gap-2 mb-8">
@@ -76,128 +105,83 @@ export default function LeaderboardPage() {
           </button>
         </div>
 
-        {currentLeaderboard.slice(0, 3).length > 0 && (
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-800">
+            {error}
+          </div>
+        )}
+
+        {topThree.length > 0 && (
           <div className="grid md:grid-cols-3 gap-4 mb-8">
-            {currentLeaderboard[1] && (
-              <div className="bg-white rounded-2xl shadow-xl p-6 text-center transform md:translate-y-4">
-                <div className="flex justify-center mb-3">
-                  {getRankIcon(2)}
+            {topThree.map((player, idx) => {
+              const rank = idx + 1;
+              return (
+                <div
+                  key={player.user_id || idx}
+                  className={`bg-white rounded-2xl shadow-xl p-6 text-center border-2 ${getRankBadge(rank)}`}
+                >
+                  <div className="flex justify-center mb-3">
+                    {getRankIcon(rank)}
+                  </div>
+                  <p className="text-sm font-medium text-gray-600 mb-1">#{rank}</p>
+                  <p className="text-xl font-bold text-gray-900 mb-2">{player.username}</p>
+                  <p className="text-3xl font-bold text-green-900 mb-1">{player.total_score || 0}</p>
+                  <p className="text-sm text-gray-600">
+                    {player.holes_played || 0} holes • Avg: {player.avg_score ? parseFloat(player.avg_score).toFixed(2) : '0.00'}
+                  </p>
                 </div>
-                <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl font-bold text-gray-700">
-                    {currentLeaderboard[1].username.charAt(0)}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  {currentLeaderboard[1].username}
-                </h3>
-                <p className="text-3xl font-bold text-gray-700 mb-2">
-                  {currentLeaderboard[1].score}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {currentLeaderboard[1].holesPlayed} holes
-                </p>
-              </div>
-            )}
-
-            {currentLeaderboard[0] && (
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl shadow-2xl p-6 text-center border-2 border-yellow-300">
-                <div className="flex justify-center mb-3">
-                  {getRankIcon(1)}
-                </div>
-                <div className="w-20 h-20 rounded-full bg-yellow-400 flex items-center justify-center mx-auto mb-3 ring-4 ring-yellow-200">
-                  <span className="text-3xl font-bold text-yellow-900">
-                    {currentLeaderboard[0].username.charAt(0)}
-                  </span>
-                </div>
-                <h3 className="text-2xl font-bold text-yellow-900 mb-1">
-                  {currentLeaderboard[0].username}
-                </h3>
-                <p className="text-4xl font-bold text-yellow-800 mb-2">
-                  {currentLeaderboard[0].score}
-                </p>
-                <p className="text-sm text-yellow-700">
-                  {currentLeaderboard[0].holesPlayed} holes
-                </p>
-              </div>
-            )}
-
-            {currentLeaderboard[2] && (
-              <div className="bg-white rounded-2xl shadow-xl p-6 text-center transform md:translate-y-4">
-                <div className="flex justify-center mb-3">
-                  {getRankIcon(3)}
-                </div>
-                <div className="w-16 h-16 rounded-full bg-orange-200 flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl font-bold text-orange-700">
-                    {currentLeaderboard[2].username.charAt(0)}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  {currentLeaderboard[2].username}
-                </h3>
-                <p className="text-3xl font-bold text-orange-700 mb-2">
-                  {currentLeaderboard[2].score}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {currentLeaderboard[2].holesPlayed} holes
-                </p>
-              </div>
-            )}
+              );
+            })}
           </div>
         )}
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-green-50 border-b-2 border-green-100">
+              <thead className="bg-green-50">
                 <tr>
-                  <th className="text-left py-4 px-6 text-green-900 font-bold">Rank</th>
-                  <th className="text-left py-4 px-6 text-green-900 font-bold">Player</th>
-                  <th className="text-center py-4 px-6 text-green-900 font-bold">Score</th>
-                  <th className="text-center py-4 px-6 text-green-900 font-bold">Holes</th>
-                  <th className="text-center py-4 px-6 text-green-900 font-bold">Avg</th>
+                  <th className="text-left py-4 px-6 text-gray-700 font-semibold">Rank</th>
+                  <th className="text-left py-4 px-6 text-gray-700 font-semibold">Player</th>
+                  <th className="text-center py-4 px-6 text-gray-700 font-semibold">Score</th>
+                  <th className="text-center py-4 px-6 text-gray-700 font-semibold">Holes</th>
+                  <th className="text-center py-4 px-6 text-gray-700 font-semibold">Avg</th>
                 </tr>
               </thead>
               <tbody>
-                {currentLeaderboard.map((player, idx) => (
-                  <tr 
-                    key={idx} 
-                    className={`border-b border-green-50 hover:bg-green-50 transition-colors ${
-                      player.rank <= 3 ? 'bg-green-25' : ''
-                    }`}
-                  >
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <span className={`w-10 h-10 rounded-full flex items-center justify-center border-2 font-bold ${getRankBadge(player.rank)}`}>
-                          {player.rank}
-                        </span>
-                        {getRankIcon(player.rank)}
-                      </div>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className="font-semibold text-gray-900">{player.username}</span>
-                    </td>
-                    <td className="py-4 px-6 text-center">
-                      <span className="text-xl font-bold text-green-900">{player.score}</span>
-                    </td>
-                    <td className="py-4 px-6 text-center text-gray-600">
-                      {player.holesPlayed}
-                    </td>
-                    <td className="py-4 px-6 text-center text-gray-600">
-                      {player.avgScore.toFixed(2)}
+                {remaining.length > 0 ? (
+                  remaining.map((player, idx) => {
+                    const rank = idx + 4;
+                    return (
+                      <tr key={player.user_id || idx} className="border-b border-gray-100 hover:bg-green-50 transition-colors">
+                        <td className="py-4 px-6">
+                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-800 font-bold">
+                            {rank}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 font-medium text-gray-900">{player.username}</td>
+                        <td className="py-4 px-6 text-center font-bold text-green-900">{player.total_score || 0}</td>
+                        <td className="py-4 px-6 text-center text-gray-600">{player.holes_played || 0}</td>
+                        <td className="py-4 px-6 text-center text-gray-600">
+                          {player.avg_score ? parseFloat(player.avg_score).toFixed(2) : '0.00'}
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : topThree.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="py-12 text-center text-gray-500">
+                      No players on the leaderboard yet. Be the first to play!
                     </td>
                   </tr>
-                ))}
+                ) : null}
               </tbody>
             </table>
           </div>
         </div>
 
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-bold text-blue-900 mb-2">🏆 How Rankings Work</h3>
-          <p className="text-blue-800">
-            Players are ranked by their cumulative golf score for the period. Lower (more negative) scores win! 
-            Ties are broken by average score per hole played.
+        <div className="mt-6 text-center text-sm text-gray-600">
+          <p>
+            {timeframe === 'monthly' ? 'Monthly' : 'Weekly'} leaderboard updates after each trading day closes.
           </p>
         </div>
 
