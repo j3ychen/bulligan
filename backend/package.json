@@ -5,6 +5,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "init-db": "node scripts/initDatabase.js",
+    "seed": "node scripts/seedData.js",
+    "reset-db": "node scripts/resetDatabase.js",
+    "setup": "npm run init-db && npm run seed",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
