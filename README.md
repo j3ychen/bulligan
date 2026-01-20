@@ -7,9 +7,9 @@ A full-stack web application that gamifies daily S&P 500 predictions using golf 
 Bulligan is a daily prediction game where you:
 - Predict where the S&P 500 will close each trading day
 - Get scored based on accuracy using golf terminology (Birdie, Eagle, Par, etc.)
-- Compete on monthly and weekly leaderboards
+- Compete with friends or globally across multiple timeframes
+- Build streaks to earn strategic mulligans
 - Track your performance history
-- Use strategic "mulligans" to improve bad scores
 
 ### Golf Scoring System
 
@@ -22,11 +22,27 @@ Your prediction accuracy determines your "strokes":
 
 The day's **Par** is determined by VIX (market volatility):
 - **Par 3**: VIX < 16 (calm markets)
-- **Par 4**: VIX 16-20 (normal)
-- **Par 5**: VIX 20-25 (elevated volatility)
+- **Par 4**: VIX 16-21 (normal)
+- **Par 5**: VIX 21-25 (elevated volatility)
 - **Par 6**: VIX ≥ 25 (high volatility)
 
 Your **Golf Score** = Strokes - Par (lower is better!)
+
+### Mulligan System
+
+**Earn mulligans through consistency:**
+- Play **5 consecutive trading days** → earn 1 mulligan
+- Mulligan awarded **after market close** on day 5
+- Available starting the **next trading day**
+- Max **2 mulligans** can be stored at once
+- Skip a day → streak resets to 0
+
+**Using a mulligan:**
+- **Mulligan window:** 11:00 AM - 2:00 PM ET (after regular deadline)
+- Completely **replaces** your original prediction
+- Consumes 1 mulligan from your stored count
+- Scores show 🔄 badge when achieved via mulligan
+- Strategic: Use when you change your mind or new information emerges
 
 ## 🏗️ Tech Stack
 
@@ -84,17 +100,20 @@ npm run dev                # Runs on http://localhost:5173
 
 - **[SETUP.md](./SETUP.md)** - Complete setup instructions
 - **[INTEGRATION.md](./INTEGRATION.md)** - API documentation and architecture
-- **[backend/database/schema.sql](./backend/database/schema.sql)** - Database schema
+- **[MIGRATION_V2.md](./MIGRATION_V2.md)** - Migration guide for v2 mulligan system
+- **[backend/database/schema_v2.sql](./backend/database/schema_v2.sql)** - Latest database schema (v2)
 
 ## ✨ Features
 
 ### For Players
 - 📊 **Daily Predictions** - Submit predictions before 11:00 AM ET
-- 🏆 **Leaderboards** - Monthly and weekly rankings
+- 🏆 **Leaderboards** - Compare with friends or globally (today/week/month/all-time)
 - 📈 **Performance Tracking** - View your history and statistics
-- 🎯 **Mulligan System** - One free "drop to bogey" per month
+- 🎯 **Mulligan System** - Earn mulligans through 5-day play streaks (max 2 stored)
+- 🔥 **Streak Tracking** - Build consecutive play streaks for rewards
 - ☁️ **Weather Conditions** - Course difficulty modifiers
 - 🏅 **Achievements** - Track your best performances
+- 👥 **Friends** - Add friends instantly and compare scores head-to-head
 
 ### Technical Features
 - 🔐 **JWT Authentication** - Secure user sessions
@@ -107,19 +126,18 @@ npm run dev                # Runs on http://localhost:5173
 ## 🗄️ Database Schema
 
 **Core Tables:**
-- `users` - User profiles with cached statistics
+- `users` - User profiles with streak tracking and mulligan counts
 - `daily_market_data` - S&P 500 + VIX data with par calculations
-- `predictions` - User daily predictions with locking
+- `predictions` - User daily predictions with mulligan tracking
 - `scores` - Calculated golf scores with deviation tracking
 
-**Competition Tables:**
-- `monthly_rounds` - Monthly competition periods
-- `user_round_stats` - User performance per month with score distribution
-- `weekly_tournaments` - Weekly competitions
-- `user_tournament_stats` - Weekly performance tracking
+**Tracking Features:**
+- **Streaks:** Current streak, longest streak, last played date
+- **Mulligans:** Available (0-2), earned total, used total
+- **Score Distribution:** Condors, albatrosses, eagles, birdies, pars, bogeys, etc.
 
 **Social Features:**
-- `friendships` - User connections
+- `friendships` - User connections (instant add, no request/accept)
 - `notifications` - User notifications
 
 ## 🛠️ Development Scripts
@@ -131,6 +149,7 @@ npm run start      # Start production server
 npm run init-db    # Initialize database tables
 npm run seed       # Populate sample data
 npm run setup      # Initialize + Seed (one command)
+npm run migrate-v2 # Migrate existing database to v2 (new mulligan system)
 npm run reset-db   # Drop all tables (WARNING: deletes data)
 ```
 
@@ -178,11 +197,12 @@ All endpoints are prefixed with `/api`
 
 ### Game Data
 - `GET /api/market/today` - Today's market data
-- `POST /api/predictions` - Submit prediction
+- `POST /api/predictions` - Submit prediction (before 11 AM)
+- `POST /api/predictions/mulligan` - Submit mulligan prediction (11 AM - 2 PM)
 - `GET /api/predictions/today` - Get today's prediction
-- `GET /api/profile/stats` - User statistics
-- `GET /api/leaderboard/monthly` - Monthly leaderboard
-- `GET /api/leaderboard/weekly` - Weekly leaderboard
+- `GET /api/profile/stats` - User statistics (includes streaks & mulligans)
+- `GET /api/leaderboard?view=friends&timeframe=week` - Leaderboard (friends/global, today/week/month/alltime)
+- `GET /api/leaderboard/rank` - User's rank
 - `GET /api/history` - Prediction history
 
 See [INTEGRATION.md](./INTEGRATION.md) for complete API documentation.
@@ -194,8 +214,8 @@ The seed script generates:
 - **4 demo users** with varying skill levels
 - **50-80 predictions** across all users
 - **Complete score history** with golf scores
-- **Monthly round stats** with leaderboard rankings
-- **Mulligan tracking** (1 per user per month)
+- **Streak tracking** - Users with varying play streaks
+- **Mulligan awards** - Based on 5-day play streaks (max 2 per user)
 
 ## 🔐 Security
 
@@ -207,19 +227,27 @@ The seed script generates:
 
 ## 🚧 Roadmap
 
+### Completed ✅
+- [x] Mulligan system with 5-day streak rewards
+- [x] Friends and global leaderboards
+- [x] Multiple timeframe views (today/week/month/all-time)
+- [x] Streak tracking
+- [x] Instant friend add system
+
 ### Near Term
 - [ ] Real-time market data integration (Yahoo Finance API)
-- [ ] Email notifications for daily reminders
-- [ ] Social features (friends, private leagues)
+- [ ] Email notifications for daily reminders and results
+- [ ] Frontend UI for mulligan system
 - [ ] Mobile app (React Native)
+- [ ] Push notifications for prediction deadlines
 
 ### Future Enhancements
 - [ ] WebSocket support for live updates
 - [ ] Advanced analytics and charting
 - [ ] Multiple prediction markets (NASDAQ, crypto, etc.)
 - [ ] Achievements and badges system
-- [ ] Tournament mode with prizes
 - [ ] Public user profiles
+- [ ] Head-to-head friend comparisons
 
 ## 🤝 Contributing
 
