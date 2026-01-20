@@ -89,7 +89,7 @@ npm run dev                # Runs on http://localhost:5173
 ## ✨ Features
 
 ### For Players
-- 📊 **Daily Predictions** - Submit predictions before 4:00 PM ET
+- 📊 **Daily Predictions** - Submit predictions before 11:00 AM ET
 - 🏆 **Leaderboards** - Monthly and weekly rankings
 - 📈 **Performance Tracking** - View your history and statistics
 - 🎯 **Mulligan System** - One free "drop to bogey" per month

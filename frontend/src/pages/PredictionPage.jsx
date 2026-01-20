@@ -100,6 +100,19 @@ export default function PredictionPage() {
   const vix = marketData?.vix_previous_close;
   const isLocked = isMarketClosed || existingPrediction?.is_locked;
 
+  // Calculate implied move vs prior day close
+  const calculateImpliedMove = () => {
+    if (!prediction || !previousClose) return null;
+    const predValue = parseFloat(prediction);
+    const prevClose = parseFloat(previousClose);
+    if (isNaN(predValue) || isNaN(prevClose) || prevClose === 0) return null;
+
+    const movePercent = ((predValue - prevClose) / prevClose) * 100;
+    return movePercent;
+  };
+
+  const impliedMove = calculateImpliedMove();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 py-12">
       <div className="max-w-3xl mx-auto px-4">
@@ -157,7 +170,7 @@ export default function PredictionPage() {
             <h2 className="text-2xl font-bold text-green-900">Make Your Prediction</h2>
             <div className="flex items-center gap-2 text-orange-600">
               <Clock className="w-5 h-5" />
-              <span className="font-medium">Deadline: 4:00 PM ET</span>
+              <span className="font-medium">Deadline: 11:00 AM ET</span>
             </div>
           </div>
 
@@ -184,6 +197,19 @@ export default function PredictionPage() {
                 <p className="text-sm text-gray-500 mt-2">
                   Enter your predicted closing price for the S&P 500
                 </p>
+                {impliedMove !== null && (
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-blue-900">Implied Move vs Prior Close:</span>
+                      <span className={`text-lg font-bold ${impliedMove >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {impliedMove >= 0 ? '+' : ''}{impliedMove.toFixed(2)}%
+                      </span>
+                    </div>
+                    <p className="text-xs text-blue-700 mt-1">
+                      From ${parseFloat(previousClose).toFixed(2)} to ${parseFloat(prediction).toFixed(2)}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <button
@@ -195,7 +221,7 @@ export default function PredictionPage() {
               </button>
 
               <p className="text-center text-sm text-gray-500">
-                You can edit your prediction until 4:00 PM ET
+                You can edit your prediction until 11:00 AM ET
               </p>
             </form>
           ) : (

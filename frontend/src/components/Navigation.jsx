@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, TrendingUp, Trophy, User, Calendar, BookOpen, Menu, X } from 'lucide-react';
+import { Home, TrendingUp, Trophy, User, BookOpen, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Navigation() {
@@ -9,7 +9,6 @@ export default function Navigation() {
   const navItems = [
     { path: '/prediction', label: 'Predict', icon: TrendingUp },
     { path: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-    { path: '/history', label: 'History', icon: Calendar },
     { path: '/profile', label: 'Profile', icon: User },
     { path: '/how-to-play', label: 'How to Play', icon: BookOpen },
   ];
