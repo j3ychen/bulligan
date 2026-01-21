@@ -40,7 +40,7 @@ export default function HowToPlayPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 mt-1">•</span>
-                  <span>Miss the deadline? You'll receive a "Gentleman's 8" penalty</span>
+                  <span>Miss a day? No penalty - just play when you want!</span>
                 </li>
               </ul>
             </div>
@@ -138,13 +138,13 @@ export default function HowToPlayPage() {
 
             <div className="border border-green-200 rounded-lg p-4">
               <div className="text-2xl font-bold text-green-900 mb-2">Par 4</div>
-              <div className="text-sm text-gray-600 mb-2">VIX 16-20</div>
+              <div className="text-sm text-gray-600 mb-2">VIX 16-21</div>
               <p className="text-gray-700">Normal volatility. Most common par level.</p>
             </div>
 
             <div className="border border-orange-200 rounded-lg p-4">
               <div className="text-2xl font-bold text-orange-900 mb-2">Par 5</div>
-              <div className="text-sm text-gray-600 mb-2">VIX 20-25</div>
+              <div className="text-sm text-gray-600 mb-2">VIX 21-25</div>
               <p className="text-gray-700">Elevated volatility. Harder to score well.</p>
             </div>
 
@@ -209,26 +209,38 @@ export default function HowToPlayPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-green-900 mb-4">Special Rules</h2>
-          
+          <h2 className="text-2xl font-bold text-green-900 mb-4">Mulligans</h2>
+
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-semibold text-green-900 mb-2">🔄 Mulligans</h3>
+              <h3 className="text-xl font-semibold text-green-900 mb-2">🔄 Earning Mulligans</h3>
               <p className="text-gray-700 leading-relaxed mb-2">
-                Each month, you get <strong>one mulligan</strong> to replay any hole (trading day). Your original score is automatically converted to a Bogey (+1), giving you a fresh chance to improve.
+                Play <strong>5 consecutive trading days</strong> to earn a mulligan. You can store up to <strong>2 mulligans</strong> at a time.
               </p>
-              <p className="text-gray-600 text-sm">
-                Use it wisely - save it for those really bad days or weather events!
-              </p>
+              <ul className="text-gray-600 text-sm space-y-1 ml-4">
+                <li>• Mulligan is earned after market close on day 5</li>
+                <li>• Available to use starting the next trading day</li>
+                <li>• Miss a day and your streak resets to 0</li>
+              </ul>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold text-red-900 mb-2">⏰ Gentleman's 8</h3>
+              <h3 className="text-xl font-semibold text-green-900 mb-2">⏰ Using Mulligans</h3>
               <p className="text-gray-700 leading-relaxed mb-2">
-                If you miss the 11 AM prediction deadline, you'll automatically receive a <strong>Gentleman's 8</strong> - the maximum 8 strokes for that day.
+                Between <strong>11:00 AM - 2:00 PM ET</strong>, you can use a mulligan to submit a new prediction that replaces your original.
               </p>
-              <p className="text-gray-600 text-sm">
-                Set reminders to avoid this penalty!
+              <ul className="text-gray-600 text-sm space-y-1 ml-4">
+                <li>• Your original prediction locks at 11 AM</li>
+                <li>• Click "Use Mulligan" to enter a new prediction</li>
+                <li>• Mulligan prediction locks at 2 PM</li>
+                <li>• Scored on whichever prediction was active at close</li>
+              </ul>
+            </div>
+
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <p className="text-green-900 font-medium mb-2">💡 Strategic Tip</p>
+              <p className="text-green-800">
+                Use mulligans when mid-day news significantly changes your market outlook. You've already seen the morning action!
               </p>
             </div>
           </div>
