@@ -1,31 +1,26 @@
-import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { TrendingUp, Users, Trophy, Target, Calendar, Zap, ArrowRight, Check } from 'lucide-react';
 
 export default function LandingPage() {
-  const [email, setEmail] = useState('');
-
-  const handleSignUp = () => {
-    if (email) {
-      alert(`Sign up with: ${email}`);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-yellow-50">
-      
+
       <nav className="bg-gradient-to-r from-green-800 to-green-900 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="w-8 h-8 text-yellow-400" />
             <span className="text-2xl font-bold text-yellow-400">Bulligan</span>
           </div>
-          <div className="flex gap-4">
-            <button className="text-green-100 hover:text-yellow-400 transition-colors font-semibold">
+          <div className="flex gap-4 items-center">
+            <Link to="/how-to-play" className="text-green-100 hover:text-yellow-400 transition-colors font-semibold">
               How It Works
-            </button>
-            <button className="bg-yellow-400 text-green-900 px-6 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
+            </Link>
+            <Link to="/login" className="text-green-100 hover:text-yellow-400 transition-colors font-semibold">
+              Sign In
+            </Link>
+            <Link to="/signup" className="bg-yellow-400 text-green-900 px-6 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition-colors">
               Sign Up Free
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -41,22 +36,19 @@ export default function LandingPage() {
             track your accuracy, and see who can master the S&P 500.
           </p>
           
-          <div className="max-w-md mx-auto mb-6">
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg border-2 border-green-300 focus:outline-none focus:border-green-600"
-              />
-              <button
-                onClick={handleSignUp}
-                className="bg-gradient-to-r from-green-700 to-green-800 text-yellow-50 px-6 py-3 rounded-lg font-semibold hover:from-green-800 hover:to-green-900 transition-all shadow-md flex items-center gap-2"
-              >
-                Start Playing <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
+          <div className="flex justify-center gap-4 mb-6">
+            <Link
+              to="/signup"
+              className="bg-gradient-to-r from-green-700 to-green-800 text-yellow-50 px-8 py-4 rounded-lg font-semibold hover:from-green-800 hover:to-green-900 transition-all shadow-md flex items-center gap-2 text-lg"
+            >
+              Start Playing Free <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              to="/login"
+              className="bg-white text-green-800 px-8 py-4 rounded-lg font-semibold border-2 border-green-300 hover:bg-green-50 transition-all flex items-center gap-2 text-lg"
+            >
+              Sign In
+            </Link>
           </div>
           
           <p className="text-sm text-green-600">Free to play • No credit card required • 1 minute setup</p>
@@ -263,9 +255,9 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <button className="bg-gradient-to-r from-green-700 to-green-800 text-yellow-50 px-8 py-4 rounded-lg font-bold text-lg hover:from-green-800 hover:to-green-900 transition-all shadow-lg">
+          <Link to="/signup" className="inline-block bg-gradient-to-r from-green-700 to-green-800 text-yellow-50 px-8 py-4 rounded-lg font-bold text-lg hover:from-green-800 hover:to-green-900 transition-all shadow-lg">
             Get Started Free →
-          </button>
+          </Link>
         </div>
       </section>
 
@@ -277,10 +269,9 @@ export default function LandingPage() {
               <span className="text-xl font-bold text-yellow-400">Bulligan</span>
             </div>
             <div className="flex gap-6 text-green-100 text-sm">
-              <a href="#" className="hover:text-yellow-400 transition-colors">How It Works</a>
-              <a href="#" className="hover:text-yellow-400 transition-colors">Leaderboard</a>
-              <a href="#" className="hover:text-yellow-400 transition-colors">About</a>
-              <a href="#" className="hover:text-yellow-400 transition-colors">Contact</a>
+              <Link to="/how-to-play" className="hover:text-yellow-400 transition-colors">How It Works</Link>
+              <Link to="/login" className="hover:text-yellow-400 transition-colors">Sign In</Link>
+              <Link to="/signup" className="hover:text-yellow-400 transition-colors">Sign Up</Link>
             </div>
             <div className="text-green-100 text-sm">
               © 2026 Bulligan. All rights reserved.
