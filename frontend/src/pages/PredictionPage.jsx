@@ -85,9 +85,38 @@ export default function PredictionPage() {
                     required
                   />
                 </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  Enter your predicted closing price for the S&P 500
-                </p>
+                {prediction && !isNaN(parseFloat(prediction)) && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Implied move vs. prior close:</span>
+                      {(() => {
+                        const impliedMove = ((parseFloat(prediction) - mockData.previousClose) / mockData.previousClose) * 100;
+                        const isPositive = impliedMove >= 0;
+                        return (
+                          <span className={`text-lg font-bold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                            {isPositive ? '+' : ''}{impliedMove.toFixed(2)}%
+                          </span>
+                        );
+                      })()}
+                    </div>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-gray-500">
+                        ${mockData.previousClose.toFixed(2)} → ${parseFloat(prediction).toFixed(2)}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {(() => {
+                          const diff = parseFloat(prediction) - mockData.previousClose;
+                          return `${diff >= 0 ? '+' : ''}${diff.toFixed(2)} pts`;
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {!prediction && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Enter your predicted closing price for the S&P 500
+                  </p>
+                )}
               </div>
 
               <button
