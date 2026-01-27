@@ -6,6 +6,10 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "db:init": "node src/scripts/initDb.js",
+    "job:morning": "node src/scripts/fetchMorningData.js",
+    "job:lock": "node src/scripts/lockPredictions.js",
+    "job:score": "node src/scripts/calculateScores.js",
+    "job:score-date": "node src/scripts/manualScoring.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,7 +22,9 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.17.1"
+    "node-cron": "^4.2.1",
+    "pg": "^8.17.1",
+    "yahoo-finance2": "^3.13.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

@@ -56,6 +56,8 @@ Earn do-overs through consistent play:
 - PostgreSQL
 - JWT authentication
 - bcrypt password hashing
+- node-cron for scheduled jobs
+- yahoo-finance2 for market data
 
 ## Getting Started
 
@@ -107,6 +109,55 @@ npm run dev
 ```
 
 The frontend runs on `http://localhost:5173` and the backend on `http://localhost:5000`.
+
+## Automated Scoring System
+
+The backend includes automated jobs that fetch market data and calculate scores daily.
+
+### Scheduled Jobs
+
+| Time (ET) | Job | Description |
+|-----------|-----|-------------|
+| 9:30 AM | Morning Data | Fetches S&P 500 opening price and VIX, calculates daily par |
+| 11:00 AM | Lock Predictions | Locks all predictions for the day (no more edits) |
+| 4:05 PM | Calculate Scores | Fetches closing price, calculates all scores, updates streaks |
+
+### Manual Job Execution
+
+Run jobs manually for testing or backfilling:
+
+```bash
+cd backend
+
+# Fetch morning data (run after 9:30 AM ET)
+npm run job:morning
+
+# Lock predictions (run after 11:00 AM ET)
+npm run job:lock
+
+# Calculate scores (run after 4:00 PM ET)
+npm run job:score
+
+# Backfill scores for a specific date
+npm run job:score-date -- --date 2026-01-24
+
+# Force recalculate (even if already done)
+npm run job:score-date -- --date 2026-01-24 --force
+
+# Override closing price
+npm run job:score-date -- --date 2026-01-24 --close 5985.50
+```
+
+### Scheduler Configuration
+
+The scheduler is enabled by default. To disable it:
+
+```bash
+# In .env
+ENABLE_SCHEDULER=false
+```
+
+When disabled, you can still run jobs manually using the npm scripts above.
 
 ## API Endpoints
 
@@ -182,10 +233,22 @@ bulligan/
 │   │   │   ├── friends.js
 │   │   │   ├── leaderboard.js
 │   │   │   └── users.js
-│   │   ├── utils/
-│   │   │   └── scoring.js
+│   │   ├── services/
+│   │   │   ├── marketDataService.js    # Yahoo Finance API wrapper
+│   │   │   ├── scoringService.js       # Score calculation orchestration
+│   │   │   ├── streakService.js        # Streak tracking & mulligan awards
+│   │   │   └── tradingCalendarService.js # NYSE holidays & trading days
+│   │   ├── scheduler/
+│   │   │   └── cronScheduler.js        # Cron job configuration
 │   │   ├── scripts/
-│   │   │   └── initDb.js
+│   │   │   ├── initDb.js
+│   │   │   ├── fetchMorningData.js     # 9:30 AM job
+│   │   │   ├── lockPredictions.js      # 11:00 AM job
+│   │   │   ├── calculateScores.js      # 4:05 PM job
+│   │   │   └── manualScoring.js        # CLI for backfill
+│   │   ├── utils/
+│   │   │   ├── scoring.js
+│   │   │   └── timezone.js             # Eastern Time utilities
 │   │   └── server.js
 │   ├── .env.example
 │   └── package.json

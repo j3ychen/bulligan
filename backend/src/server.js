@@ -9,6 +9,9 @@ const friendsRoutes = require('./routes/friends');
 const leaderboardRoutes = require('./routes/leaderboard');
 const usersRoutes = require('./routes/users');
 
+// Import scheduler
+const { initializeScheduler } = require('./scheduler/cronScheduler');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -63,4 +66,11 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Bulligan API server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+
+  // Initialize scheduler if enabled
+  if (process.env.ENABLE_SCHEDULER !== 'false') {
+    initializeScheduler();
+  } else {
+    console.log('Scheduler disabled (ENABLE_SCHEDULER=false)');
+  }
 });
