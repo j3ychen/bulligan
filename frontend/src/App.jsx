@@ -71,8 +71,8 @@ function AppContent() {
       {isAuthenticated && <Navigation />}
 
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
+        {/* Home Route - redirect to prediction if logged in */}
+        <Route path="/" element={isAuthenticated ? <Navigate to="/prediction" /> : <LandingPage />} />
         <Route path="/how-to-play" element={<HowToPlayPage />} />
 
         {/* Guest Routes (redirect if authenticated) */}

@@ -156,7 +156,16 @@ export default function LeaderboardPage() {
       return now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
     }
     if (timeframe === 'week') {
-      return 'Current Week';
+      // Calculate Monday and Friday of the current week
+      const dayOfWeek = now.getDay();
+      const monday = new Date(now);
+      monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+      const friday = new Date(monday);
+      friday.setDate(monday.getDate() + 4);
+
+      const monStr = monday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const friStr = friday.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return `Mon-Fri, ${monStr} - ${friStr}`;
     }
     if (timeframe === 'month') {
       return now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });

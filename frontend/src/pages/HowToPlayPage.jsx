@@ -1,4 +1,4 @@
-import { Clock, TrendingUp, Award, Zap, Cloud, Wind, CloudRain, Tornado } from 'lucide-react';
+import { Clock, TrendingUp, Award } from 'lucide-react';
 
 export default function HowToPlayPage() {
   return (
@@ -153,58 +153,6 @@ export default function HowToPlayPage() {
               <div className="text-sm text-gray-600 mb-2">VIX ≥ 25</div>
               <p className="text-gray-700">High volatility. Very challenging conditions!</p>
             </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Zap className="w-8 h-8 text-green-600" />
-            <h2 className="text-2xl font-bold text-green-900">Weather Conditions</h2>
-          </div>
-          
-          <p className="text-gray-700 mb-6 leading-relaxed">
-            Each day's "weather" is determined by how the market actually moved compared to expectations:
-          </p>
-
-          <div className="space-y-4">
-            <div className="flex items-start gap-4 p-4 bg-green-50 rounded-lg">
-              <Cloud className="w-8 h-8 text-gray-400 flex-shrink-0 mt-1" />
-              <div>
-                <div className="font-semibold text-green-900 mb-1">Perfect Conditions</div>
-                <p className="text-gray-700">Market moved as expected by volatility. Standard play.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-              <Wind className="w-8 h-8 text-gray-500 flex-shrink-0 mt-1" />
-              <div>
-                <div className="font-semibold text-gray-900 mb-1">Fog</div>
-                <p className="text-gray-700">Large intraday swings that reversed. The market changed direction significantly during the day.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 bg-yellow-50 rounded-lg">
-              <CloudRain className="w-8 h-8 text-yellow-600 flex-shrink-0 mt-1" />
-              <div>
-                <div className="font-semibold text-yellow-900 mb-1">Thunderstorm</div>
-                <p className="text-gray-700">Market moved 1.5x more than expected. Significant unexpected volatility.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 p-4 bg-red-50 rounded-lg">
-              <Tornado className="w-8 h-8 text-red-600 flex-shrink-0 mt-1" />
-              <div>
-                <div className="font-semibold text-red-900 mb-1">Tornado</div>
-                <p className="text-gray-700">Market moved 2x+ more than expected. Extreme unexpected movement!</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <p className="text-amber-900 font-medium mb-2">⛳ Weather is Informational</p>
-            <p className="text-amber-800">
-              Weather conditions don't affect your score - they just help explain what happened that day and why predictions were harder or easier than expected.
-            </p>
           </div>
         </div>
 
